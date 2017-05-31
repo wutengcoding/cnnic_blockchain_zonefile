@@ -566,7 +566,7 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
     def get_valid_ops(self, current_block_id):
         ops = []
         name_action_list = self.vote_poll.keys()
-
+        log.info("vote_poll is " + self.vote_poll.keys())
         for name_action_blockid in name_action_list:
             parts = name_action_blockid.split("_")
             block_id = parts[-1]
@@ -590,10 +590,11 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
         log.info('Get the register rpc for %s' % name)
 
         nameset_cache.append(name)
-        # for i in range(0, 20):
-        #     resp = zonefilemanage_name_register(name + str(i), wallets[0].privkey)
 
-        resp = zonefilemanage_name_register(name, wallets[0].privkey)
+        for i in range(0, 20):
+            resp = zonefilemanage_name_register(name + str(i), wallets[0].privkey)
+
+        # resp = zonefilemanage_name_register(name, wallets[0].privkey)
         log.info("resp is %s" % resp)
 
         bitcoin_regtest_next_block()
