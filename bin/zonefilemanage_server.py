@@ -591,9 +591,9 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
 
         nameset_cache.append(name)
         tempname = name
-        for i in range(0, 10):
+        for i in range(0, 100):
             name = tempname + str(i)
-            time.sleep(2)
+            time.sleep(1)
             resp = zonefilemanage_name_register(name, wallets[0].privkey)
 
         log.info("resp is %s" % resp)
@@ -631,19 +631,14 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
         if name_action_blockid not in self.vote_poll.keys():
             return False
 
-        num = random.randint(1, 10)
-        if num == 1:
-            self.vote_poll[name_action_blockid] += 1
+        # num = random.randint(1, 10)
+        # if num == 1:
+        #     self.vote_poll[name_action_blockid] += 1
 
-
-        # For true register
+        return True
 
         # if is_main_worker():
-        #     return False
-
-        # For false register
-        if is_main_worker():
-            return True
+        #     return True
 
         self.vote_count[name_action_blockid] += 1
         try:
