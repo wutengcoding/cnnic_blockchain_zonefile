@@ -591,7 +591,7 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
 
         nameset_cache.append(name)
         tempname = name
-        for i in range(0, 20):
+        for i in range(0, 1):
             name = tempname + str(i)
             resp = zonefilemanage_name_register(name, wallets[0].privkey)
 
