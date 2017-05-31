@@ -635,6 +635,7 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
         # if num == 1:
         #     self.vote_poll[name_action_blockid] += 1
 
+        log.info("collect vote for %s" % name_action_blockid)
         return True
 
         # if is_main_worker():
