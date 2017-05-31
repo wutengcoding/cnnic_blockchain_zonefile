@@ -590,10 +590,7 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
         log.info('Get the register rpc for %s' % name)
 
         nameset_cache.append(name)
-        tempname = name
-        for i in range(0, 1):
-            name = tempname + str(i)
-            resp = zonefilemanage_name_register(name, wallets[0].privkey)
+        resp = zonefilemanage_name_register(name, wallets[0].privkey)
 
         log.info("resp is %s" % resp)
 
@@ -635,9 +632,6 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
 
         log.info("collect vote for %s" % name_action_blockid)
         return True
-
-        if name_action_blockid not in self.vote_poll.keys():
-            return False
 
         # if is_main_worker():
         #     return True
