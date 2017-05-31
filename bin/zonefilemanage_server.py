@@ -627,8 +627,7 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
         Collect the vote result for a name
         """
         # My opinion towards this
-        if name_action_blockid not in self.vote_poll.keys():
-            return False
+
 
         # num = random.randint(1, 10)
         # if num == 1:
@@ -636,6 +635,9 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
 
         log.info("collect vote for %s" % name_action_blockid)
         return True
+
+        if name_action_blockid not in self.vote_poll.keys():
+            return False
 
         # if is_main_worker():
         #     return True
