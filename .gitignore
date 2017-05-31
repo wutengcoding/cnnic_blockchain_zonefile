@@ -1,0 +1,4 @@
+.idea
+*.pyc
+integration_test/test.log
+bin/test.log
