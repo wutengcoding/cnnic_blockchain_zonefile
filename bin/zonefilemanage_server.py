@@ -566,7 +566,7 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
     def get_valid_ops(self, current_block_id):
         ops = []
         name_action_list = self.vote_poll.keys()
-        log.info("vote_poll is " + self.vote_poll.keys())
+        log.info("vote_poll is " + " ".join(self.vote_poll.keys()))
         for name_action_blockid in name_action_list:
             parts = name_action_blockid.split("_")
             block_id = parts[-1]
