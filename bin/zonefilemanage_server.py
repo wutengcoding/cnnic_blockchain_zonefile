@@ -471,7 +471,6 @@ def send_candidate_ops(current_block_id, candidate_name=None):
             zonefilemanage_name_register(name, wallets[0].privkey, '1')
             count += 1
 
-
         clear_cache_flag = True
 
     return clear_cache_flag
@@ -530,6 +529,7 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
     def __init__(self, host='0.0.0.0', port = RPC_SERVER_PORT, handler = SimpleXMLRPCRequestHandler):
         SimpleXMLRPCServer.__init__(self,(host, port), handler, allow_none=True)
         log.info("ZonefileManageRPC listening on (%s, %s)" % (host, port))
+        self.index = 0 # the index of the number of tx processed
         self.db = state_engine.get_readonly_db_state(disposition=state_engine.DISPOSITION_RO)
         # Register method
         for attr in dir(self):
@@ -596,12 +596,11 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
 
         nameset_cache.append(name)
 
-        for j in range(0, 10):
-            for i in range(0, 10):
-                resp = zonefilemanage_name_register(name + str(j * 10 +  i), wallets[0].privkey)
+        self.index += 1
 
-                # resp = zonefilemanage_name_register(name, wallets[0].privkey)
-                log.info("resp is %s" % resp)
+        resp = zonefilemanage_name_register(name, wallets[0].privkey)
+        log.info("resp is %s" % resp)
+        if self.index % 10 == 0:
             bitcoin_regtest_next_block()
         return resp
 
