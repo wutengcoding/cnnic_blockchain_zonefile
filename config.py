@@ -82,7 +82,7 @@ OPCODE_NAME_STATE_TRANSITIONS = [
     "NAME_REVOKE"
 ]
 
-
+IMPL = None
 bitcoin_regtest_opts = None
 
 RPC_SERVER_PORT = 16264

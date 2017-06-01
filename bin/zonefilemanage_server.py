@@ -530,10 +530,10 @@ class VoteServer(threading.Thread, object):
     def __init__(self):
         super(VoteServer, self).__init__()
         self.vote_poll = {}
-        self.db = state_engine.get_readonly_db_state(disposition=state_engine.DISPOSITION_RO)
 
     def run(self):
-        print 'xixi'
+        self.db = state_engine.get_readonly_db_state(disposition=state_engine.DISPOSITION_RO)
+
         app = Flask(__name__)
 
         @app.route('/register', methods=['POST', 'GET'])
