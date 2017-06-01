@@ -11,10 +11,11 @@ proxy = [node1, node2, node3]
 
 def generate_name_set():
     name_list = []
-    for i in range(0, 100):
+    for i in range(0, 1000):
         name_list.append('bar' + str(i))
     return name_list
 
+start_time = time.time()
 namelist = generate_name_set()
 
 # do register name
@@ -24,9 +25,10 @@ for name in namelist:
     proxy_node = proxy[node_index]
     res = proxy_node.rpc_register_name(name)
     print res
-    time.sleep(2)
 # flush
 node2.rpc_register_name('flush')
+end_time = time.time()
+print "time is %s" % str(end_time - start_time)
 time.sleep(2)
 
 # do count successful name register
