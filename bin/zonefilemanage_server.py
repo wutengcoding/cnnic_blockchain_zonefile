@@ -467,11 +467,8 @@ def send_candidate_ops(current_block_id, candidate_name=None):
             continue
 
         log.info('name: %s action: %s' % (name, action))
-        # if count < 10:
-        #     zonefilemanage_name_register(name, wallets[0].privkey, '1')
-        #     count += 1
-        zonefilemanage_name_register(name, wallets[0].privkey, '1')
 
+        zonefilemanage_name_register(name, wallets[0].privkey, '1')
         clear_cache_flag = True
 
     return clear_cache_flag
@@ -599,10 +596,9 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
 
         self.index += 1
 
+
         resp = zonefilemanage_name_register(name, wallets[0].privkey)
         log.info("resp is %s" % resp)
-        # if self.index % 10 == 0:
-        #     bitcoin_regtest_next_block()
         bitcoin_regtest_next_block()
         return resp
 
