@@ -627,6 +627,8 @@ class VoteServer(threading.Thread, object):
             log.exception(e)
 
 
+    def get_pooled_valid_ops(self, current_block_id):
+        return self.get_valid_ops(current_block_id)
 
 server = VoteServer()
 server.start()
