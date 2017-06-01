@@ -467,10 +467,11 @@ def send_candidate_ops(current_block_id, candidate_name=None):
             continue
 
         log.info('name: %s action: %s' % (name, action))
-        zonefilemanage_name_register(name, wallets[0].privkey, '1')
-        count += 1
-        if count % 10 == 0:
-            bitcoin_regtest_next_block()
+        if count < 10:
+            zonefilemanage_name_register(name, wallets[0].privkey, '1')
+            count += 1
+
+
         clear_cache_flag = True
 
     return clear_cache_flag
