@@ -561,10 +561,10 @@ class VoteServer(threading.Thread, object):
             name = request.form['name']
             action = request.form['action']
 
-            try:
-                assert type(poll) is bool
-            except Exception, e:
-                log.exception(e)
+            if "True" == poll:
+                poll = True
+            else:
+                poll = False
 
             item = name + '_' + action
 
