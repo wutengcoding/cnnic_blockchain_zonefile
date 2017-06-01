@@ -597,9 +597,7 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
 
                 # resp = zonefilemanage_name_register(name, wallets[0].privkey)
                 log.info("resp is %s" % resp)
-
-                bitcoin_regtest_next_block()
-
+            bitcoin_regtest_next_block()
         return resp
 
     def rpc_declare_block_owner(self, block_id, owner):
