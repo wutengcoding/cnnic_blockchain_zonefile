@@ -1,5 +1,6 @@
 from pybitcoin import make_op_return_tx
 import random
+import time
 import virtualchain
 from config import *
 from state_machine.nameset import *
