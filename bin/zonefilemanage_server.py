@@ -312,7 +312,7 @@ def bitcoin_regtest_next_block():
     bitcoind.generate(1)
     log.info("Next block (now at %s) type is %s" % (current_block + 1, type(current_block)))
 
-    declare_block_owner(current_block + 1, get_my_ip())
+    # declare_block_owner(current_block + 1, get_my_ip())
 
 def parse_args( argv ):
     """
@@ -413,12 +413,13 @@ def run_zonefilemanage():
             os.abort()
 
     # Start up the rpc server
-    server = ZonefileManageRPCServer(port = RPC_SERVER_PORT)
+    # server = ZonefileManageRPCServer(port = RPC_SERVER_PORT)
+    server = VoteServer()
     server.start()
 
     # startVoteServer()
-    voteServer = VoteServer()
-    voteServer.start()
+    # voteServer = VoteServer()
+    # voteServer.start()
 
     set_global_server(server)
 
@@ -528,16 +529,57 @@ from flask import request
 class VoteServer(threading.Thread, object):
     def __init__(self):
         super(VoteServer, self).__init__()
-
+        self.vote_poll = {}
+        self.db = state_engine.get_readonly_db_state(disposition=state_engine.DISPOSITION_RO)
 
     def run(self):
         print 'xixi'
         app = Flask(__name__)
 
+        @app.route('/register', methods=['POST', 'GET'])
+        def register():
+            name = request.form['name']
+            log.info('Get the register rpc for %s' % name)
+
+            resp = zonefilemanage_name_register(name, wallets[0].privkey)
+
+            log.info("resp is %s" % resp)
+            bitcoin_regtest_next_block()
+            return resp
+
+        @app.route('/query', methods=['POST', 'GET'])
+        def query():
+            name = request.form['name']
+            log.info('Get the query rpc for %s' % name)
+            name_record = self.db.get_name(name)
+            return name_record
 
         @app.route('/vote', methods=['POST', 'GET'])
         def vote():
             # vote_for_name_to_one(name, action, block_id, poll, h)
+            poll = request.form['poll']
+            name = request.form['name']
+            action = request.form['action']
+
+            try:
+                assert type(poll) is bool
+            except Exception, e:
+                log.exception(e)
+
+            item = name + '_' + action
+
+            if poll:
+                if name in self.vote_poll.keys():
+                    self.vote_poll[item] += 1
+                else:
+                    self.vote_poll[item] = 1
+            else:
+                if name in self.vote_poll.keys():
+                    self.vote_poll[item] += 0
+                else:
+                    self.vote_poll[item] = 0
+
+
             return json.dumps(
                 {'name': request.form['name'],
                  'action': request.form['action'],
@@ -547,6 +589,45 @@ class VoteServer(threading.Thread, object):
             )
 
         app.run('0.0.0.0', 5001)
+
+
+
+
+    def get_valid_ops(self, current_block_id):
+        ops = []
+        name_action_list = self.vote_poll.keys()
+        log.info("vote_poll is " + " ".join(self.vote_poll.keys()))
+        for name_action_blockid in name_action_list:
+            if self.rpc_collect_vote(name_action_blockid):
+                ops.append(name_action_blockid)
+
+        return ops
+
+    def clear_old_ops(self, name, action, blockid):
+        to_delete_key = "{}_{}".format(name, action)
+        if to_delete_key in self.vote_poll.keys():
+            del self.vote_poll[to_delete_key]
+
+
+
+
+    def rpc_collect_vote(self, name_action):
+        """
+        Collect the vote result for a name
+        """
+
+        log.info("collect vote for %s" % name_action)
+        # if is_main_worker():
+        #     return True
+
+        try:
+            assert name_action in self.vote_poll.keys(),  "Collect for invalid name %s" % name_action
+            return self.vote_poll[name_action] * 2 >= get_p2p_count()
+        except Exception, e:
+            log.exception(e)
+
+
+
 server = VoteServer()
 server.start()
 

@@ -313,6 +313,10 @@ def get_p2p_hosts():
 
     return ips
 
+def get_p2p_count():
+    return len(get_p2p_hosts())
+
+
 def get_previous_ips():
     my_ip = get_my_ip()
     hosts = get_p2p_hosts()
