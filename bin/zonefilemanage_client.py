@@ -22,7 +22,7 @@ def vote_for_name_to_one(name, action, block_id, poll, ip):
         # s.rpc_vote_for_name_action(name, action, block_id, poll)
         # s('close')
 
-        user_info = {'name': 'name', 'action': action, 'block_id': block_id, 'poll': poll}
+        user_info = {'name': name, 'action': action, 'block_id': block_id, 'poll': poll}
         r = requests.post("http://" + ip + ":5001/vote", data=user_info)
         log.info("vote result " + r.text)
         return True
