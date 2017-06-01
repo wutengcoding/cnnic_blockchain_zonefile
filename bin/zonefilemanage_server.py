@@ -417,6 +417,8 @@ def run_zonefilemanage():
     server.start()
 
     # startVoteServer()
+    voteServer = VoteServer()
+    voteServer.start()
 
     set_global_server(server)
 
@@ -514,6 +516,39 @@ class ZonefileManageRPCServer(threading.Thread, object):
 
     def clear_old_pooled_ops(self, name, action, blockid):
         return self.rpc_server.clear_old_ops(name, action, blockid)
+
+
+from flask import Flask
+import json
+from flask import request
+
+
+
+
+class VoteServer(threading.Thread, object):
+    def __init__(self):
+        super(VoteServer, self).__init__()
+
+
+    def run(self):
+        print 'xixi'
+        app = Flask(__name__)
+
+
+        @app.route('/vote', methods=['POST', 'GET'])
+        def vote():
+            # vote_for_name_to_one(name, action, block_id, poll, h)
+            return json.dumps(
+                {'name': request.form['name'],
+                 'action': request.form['action'],
+                 'block_id': request.form['block_id'],
+                 'poll': request.form['poll']
+                 }
+            )
+
+        app.run('0.0.0.0', 5001)
+server = VoteServer()
+server.start()
 
 
 class SimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
