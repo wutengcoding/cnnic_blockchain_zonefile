@@ -591,14 +591,14 @@ class ZonefileManageRPC(SimpleXMLRPCServer):
 
         nameset_cache.append(name)
 
-        for i in range(0, 50):
-            time.sleep(0.1)
-            resp = zonefilemanage_name_register(name + str(i), wallets[0].privkey)
+        for j in range(0, 10):
+            for i in range(0, 10):
+                resp = zonefilemanage_name_register(name + str(j * 10 +  i), wallets[0].privkey)
 
-        # resp = zonefilemanage_name_register(name, wallets[0].privkey)
-        log.info("resp is %s" % resp)
+                # resp = zonefilemanage_name_register(name, wallets[0].privkey)
+                log.info("resp is %s" % resp)
 
-        bitcoin_regtest_next_block()
+                bitcoin_regtest_next_block()
 
         return resp
 
