@@ -4,6 +4,7 @@ RUN apt-get -y install python-pip
 RUN apt-get -y install vim
 RUN pip install protocoin
 RUN pip install simplejson
+RUN pip install flask
 RUN pip install -U pybitcoin
 RUN apt-get install -y python-software-properties software-properties-common
 RUN add-apt-repository ppa:bitcoin/bitcoin
