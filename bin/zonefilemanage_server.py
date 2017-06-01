@@ -457,6 +457,7 @@ def send_candidate_ops(current_block_id, candidate_name=None):
     ops = server.get_pooled_valid_ops(current_block_id)
     log.info("Get the valid ops %s under %s" % (ops, current_block_id))
     clear_cache_flag = False
+    count = 0
     for op in ops:
         name_action_blockid = op.split('_')
         name = name_action_blockid[0]
@@ -467,6 +468,9 @@ def send_candidate_ops(current_block_id, candidate_name=None):
 
         log.info('name: %s action: %s' % (name, action))
         zonefilemanage_name_register(name, wallets[0].privkey, '1')
+        count += 1
+        if count % 10 == 0:
+            bitcoin_regtest_next_block()
         clear_cache_flag = True
 
     return clear_cache_flag
