@@ -545,7 +545,7 @@ class VoteServer(threading.Thread, object):
 
             log.info("resp is %s" % resp)
             bitcoin_regtest_next_block()
-            return resp
+            return json.dumps(resp)
 
         @app.route('/query', methods=['POST', 'GET'])
         def query():
