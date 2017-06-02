@@ -570,7 +570,7 @@ class VoteServer(threading.Thread, object):
 
             if poll:
                 log.info("The poll for [%s, %s] is %s" % (ip, item, poll))
-                if name in self.vote_poll.keys():
+                if item in self.vote_poll.keys():
                     self.vote_poll[item] += 1
                 else:
                     self.vote_poll[item] = 1
