@@ -616,13 +616,15 @@ class VoteServer(threading.Thread, object):
         Collect the vote result for a name
         """
 
-        log.info("collect vote for %s" % name_action)
+
         # if is_main_worker():
         #     return True
 
         try:
             assert name_action in self.vote_poll.keys(),  "Collect for invalid name %s" % name_action
-            return self.vote_poll[name_action] * 2 >= get_p2p_count()
+            res = self.vote_poll[name_action] * 2 >= get_p2p_count()
+            log.info("collect vote for %s and result is %s. the vote is %s and the count is %s" % (name_action, res, self.vote_poll[name_action], get_p2p_count()) )
+            return res
         except Exception, e:
             log.exception(e)
 
