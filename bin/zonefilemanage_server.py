@@ -593,11 +593,6 @@ class VoteServer(threading.Thread, object):
     def get_pooled_valid_ops(self, current_block_id):
         return self.get_valid_ops(current_block_id)
 
-server = VoteServer()
-server.start()
-
-
-
 if __name__ == '__main__':
 
     run_zonefilemanage()
