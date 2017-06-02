@@ -593,7 +593,7 @@ class VoteServer(threading.Thread, object):
     def get_valid_ops(self, current_block_id):
         ops = []
         name_action_list = self.vote_poll.keys()
-        log.info("vote_poll is " + " ".join(self.vote_poll.keys()))
+        log.info("vote_poll is " + str(self.vote_poll))
         for name_action_blockid in name_action_list:
             if self.rpc_collect_vote(name_action_blockid):
                 ops.append(name_action_blockid)
