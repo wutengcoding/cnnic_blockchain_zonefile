@@ -2,6 +2,7 @@ from pybitcoin import make_op_return_tx
 import random
 import time
 import virtualchain
+import threading
 from config import *
 from state_machine.nameset import *
 from state_machine.nameset.state_checker import state_create
@@ -136,8 +137,10 @@ def check_register(state_engine, nameop, block_id, checked_ops):
         #
         # if is_main_worker():
         #     poll = True
-        time.sleep(5)
-        vote_for_name(name, "REGISTER", nameop['block_number'], poll)
+        t = threading.Timer(5.0, vote_for_name, [name, "REGISTER", nameop['block_number'], poll])
+        t.start()
+
+        # vote_for_name(name, "REGISTER", nameop['block_number'], poll)
         return False
 
     elif status == '1':
