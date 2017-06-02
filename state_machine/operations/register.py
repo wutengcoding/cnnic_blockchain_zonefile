@@ -145,7 +145,7 @@ def check_register(state_engine, nameop, block_id, checked_ops):
 
         if voting_strategy == 0:
             server = get_global_server()
-            vote_res = server.collect_vote_poll(name, "REGISTER", nameop['block_number'] - 1)
+            vote_res = server.rpc_collect_vote("%s_REGISTER" % name)
             log.info("Get name: %s action status is %s" % (name, vote_res))
             if not vote_res:
                 return False
