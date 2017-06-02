@@ -411,13 +411,9 @@ def run_zonefilemanage():
             os.abort()
 
     # Start up the rpc server
-    # server = ZonefileManageRPCServer(port = RPC_SERVER_PORT)
     server = VoteServer()
     server.start()
 
-    # startVoteServer()
-    # voteServer = VoteServer()
-    # voteServer.start()
 
     set_global_server(server)
 
@@ -470,7 +466,6 @@ def send_candidate_ops(current_block_id, candidate_name=None):
         log.info('name: %s action: %s' % (name, action))
 
         zonefilemanage_name_register(name, wallets[0].privkey, '1')
-        server.clear_valid_ops(op)
         clear_cache_flag = True
 
     return clear_cache_flag
@@ -567,10 +562,6 @@ class VoteServer(threading.Thread, object):
         if to_delete_key in self.vote_poll.keys():
             del self.vote_poll[to_delete_key]
 
-    def clear_valid_ops(self, to_delete_key):
-        if to_delete_key in self.vote_poll.keys():
-            del self.vote_poll[to_delete_key]
-
 
     def collect_vote(self, name_action):
         """
@@ -588,6 +579,7 @@ class VoteServer(threading.Thread, object):
             return res
         except Exception, e:
             log.exception(e)
+            return False
 
 
     def get_pooled_valid_ops(self, current_block_id):
