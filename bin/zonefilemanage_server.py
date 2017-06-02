@@ -513,7 +513,7 @@ class VoteServer(threading.Thread, object):
             name = request.form['name']
             log.info('Get the query rpc for %s' % name)
             name_record = self.db.get_name(name)
-            return name_record
+            return json.dumps(name_record)
 
         @app.route('/vote', methods=['POST', 'GET'])
         def vote():
