@@ -1,4 +1,3 @@
-import SocketServer
 import os
 import logging
 import importlib
@@ -9,7 +8,6 @@ import socket
 import time
 import threading
 import commands
-from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler, SimpleXMLRPCServer
 
 os.environ['ZONEFILEMANAGE_DEBUG'] = '1'
 os.environ['ZONEFILEMANAGE_TEST'] = '1'
@@ -480,43 +478,6 @@ def get_global_db():
     global db_inst
     return db_inst
 
-class ZonefileManageRPCServer(threading.Thread, object):
-    """
-    RPC Server
-    """
-    def __init__(self, host='0.0.0.0', port=RPC_SERVER_PORT):
-        super(ZonefileManageRPCServer, self).__init__()
-        self.rpc_server = None
-        self.host = host
-        self.port = port
-
-    def run(self):
-        """
-        Server until asked to stop
-        """
-        self.rpc_server = ZonefileManageRPC(self.host, self.port)
-        self.rpc_server.serve_forever()
-
-    def stop_server(self):
-        """
-        Stop serving
-        """
-        if self.rpc_server is not None:
-            self.rpc_server.shutdown()
-
-    def collect_vote_poll(self, name, action, blockid):
-        # return self.rpc_server.rpc_collect_vote("{}_{}_{}".format(name, action, blockid))
-        return self.rpc_server.rpc_collect_vote("{}_{}".format(name, action))
-
-    def get_block_owner(self, block_id):
-        return self.get_block_owner(block_id)
-
-    def get_pooled_valid_ops(self, current_block_id):
-        return self.rpc_server.get_valid_ops(current_block_id)
-
-
-    def clear_old_pooled_ops(self, name, action, blockid):
-        return self.rpc_server.clear_old_ops(name, action, blockid)
 
 
 from flask import Flask
@@ -595,7 +556,7 @@ class VoteServer(threading.Thread, object):
         name_action_list = self.vote_poll.keys()
         log.info("vote_poll is " + str(self.vote_poll))
         for name_action_blockid in name_action_list:
-            if self.rpc_collect_vote(name_action_blockid):
+            if self.collect_vote(name_action_blockid):
                 ops.append(name_action_blockid)
 
         return ops
@@ -608,7 +569,7 @@ class VoteServer(threading.Thread, object):
 
 
 
-    def rpc_collect_vote(self, name_action):
+    def collect_vote(self, name_action):
         """
         Collect the vote result for a name
         """
@@ -633,136 +594,6 @@ server = VoteServer()
 server.start()
 
 
-class SimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
-    rpc_path = ('/RPC2',)
-
-
-class ZonefileManageRPC(SimpleXMLRPCServer):
-    """
-    ZonefileManage RPC server
-    """
-    def __init__(self, host='0.0.0.0', port = RPC_SERVER_PORT, handler = SimpleXMLRPCRequestHandler):
-        SimpleXMLRPCServer.__init__(self,(host, port), handler, allow_none=True)
-        log.info("ZonefileManageRPC listening on (%s, %s)" % (host, port))
-        self.index = 0 # the index of the number of tx processed
-        self.db = state_engine.get_readonly_db_state(disposition=state_engine.DISPOSITION_RO)
-        # Register method
-        for attr in dir(self):
-            if attr.startswith("rpc_"):
-                method = getattr(self, attr)
-                if callable(method) or hasattr(method, '__call__'):
-                    self.register_function(method)
-        # Initial the voteing result
-        self.vote_poll = {}
-        self.vote_count = {}
-
-        # The owner of the block
-        self.block_owner = {}
-
-
-    def rpc_vote_for_name_action(self, name, action, block_id, poll):
-        try:
-            assert type(poll) is bool
-        except Exception, e:
-            log.exception(e)
-        # item = name + '_' + action + '_' + str(block_id)
-        item = name + '_' + action
-        if item in self.vote_count.keys():
-            self.vote_count[item] += 1
-        else:
-            self.vote_count[item] = 1
-
-        if poll:
-            if name in self.vote_poll.keys():
-                self.vote_poll[item] += 1
-            else:
-                self.vote_poll[item] = 1
-        else:
-            if name in self.vote_poll.keys():
-                self.vote_poll[item] += 0
-            else:
-                self.vote_poll[item] = 0
-
-    def get_valid_ops(self, current_block_id):
-        ops = []
-        name_action_list = self.vote_poll.keys()
-        log.info("vote_poll is " + " ".join(self.vote_poll.keys()))
-        for name_action_blockid in name_action_list:
-            parts = name_action_blockid.split("_")
-            block_id = parts[-1]
-
-            if self.rpc_collect_vote(name_action_blockid):
-                ops.append(name_action_blockid)
-
-        return ops
-
-    def clear_old_ops(self, name, action, blockid):
-        # to_delete_key = "{}_{}_{}".format(name, action, blockid)
-        to_delete_key = "{}_{}".format(name, action)
-        if to_delete_key in self.vote_poll.keys():
-            del self.vote_poll[to_delete_key]
-
-    def rpc_register_name(self, name):
-        """
-        RPC method for register a name
-        """
-
-        log.info('Get the register rpc for %s' % name)
-
-        nameset_cache.append(name)
-
-        self.index += 1
-
-
-        resp = zonefilemanage_name_register(name, wallets[0].privkey)
-        log.info("resp is %s" % resp)
-        bitcoin_regtest_next_block()
-        return resp
-
-    def rpc_declare_block_owner(self, block_id, owner):
-        """
-        the owner of the that block id
-        """
-        log.info("receive the owner of the block_id %s is %s" % (block_id, owner))
-        if block_id not in self.block_owner.keys():
-            self.block_owner[block_id] = owner
-            # Clear the previous vote cache
-
-        else:
-            log.error("Get duplicate owner of block_id %s, previous is %s, now is %s" % (block_id, self.block_owner[block_id], owner))
-
-
-
-    def rpc_get_name(self, name):
-
-
-        log.info('Get the query rpc for %s' % name)
-        name_record = self.db.get_name(name)
-        return name_record
-
-    def rpc_collect_vote(self, name_action_blockid):
-        """
-        Collect the vote result for a name
-        """
-        # My opinion towards this
-
-
-        # num = random.randint(1, 10)
-        # if num == 1:
-        #     self.vote_poll[name_action_blockid] += 1
-
-        log.info("collect vote for %s" % name_action_blockid)
-        return True
-
-        # if is_main_worker():
-        #     return True
-
-        self.vote_count[name_action_blockid] += 1
-        try:
-            assert name_action_blockid in self.vote_poll.keys() and name_action_blockid in self.vote_count.keys(), "Collect for invalid name %s" % name_action_blockid
-            return self.vote_poll[name_action_blockid] * 2 > self.vote_count[name_action_blockid]
-        except Exception, e:
-            log.exception(e)
 
 if __name__ == '__main__':
 
