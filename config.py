@@ -138,6 +138,7 @@ def get_logger(name="ZONEFILEMANAGE"):
         name = "<unknown>"
         level = logging.CRITICAL
 
+    level = logging.ERROR
     log = logging.getLogger(name=name)
     log.setLevel(level)
     console = logging.StreamHandler()

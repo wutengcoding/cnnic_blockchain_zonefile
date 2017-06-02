@@ -3,6 +3,7 @@ import time
 import random
 RPC_SERVER_PORT = 16264
 cnt = 0
+
 node1 = xmlrpclib.ServerProxy('http://172.17.0.2:%s' % RPC_SERVER_PORT)
 node2 = xmlrpclib.ServerProxy('http://172.17.0.3:%s' % RPC_SERVER_PORT)
 node3 = xmlrpclib.ServerProxy('http://172.17.0.4:%s' % RPC_SERVER_PORT)

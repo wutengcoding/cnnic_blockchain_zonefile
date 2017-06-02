@@ -554,14 +554,14 @@ class VoteServer(threading.Thread, object):
     def get_valid_ops(self, current_block_id):
         ops = []
         name_action_list = self.vote_poll.keys()
-        log.info("vote_poll is " + str(self.vote_poll))
-        for name_action_blockid in name_action_list:
-            if self.collect_vote(name_action_blockid):
-                ops.append(name_action_blockid)
+        log.error("vote_poll is " + str(self.vote_poll))
+        for name_action in name_action_list:
+            if self.collect_vote(name_action):
+                ops.append(name_action)
 
         return ops
 
-    def clear_old_ops(self, name, action, blockid):
+    def clear_old_ops(self, name, action):
         to_delete_key = "{}_{}".format(name, action)
         if to_delete_key in self.vote_poll.keys():
             del self.vote_poll[to_delete_key]
@@ -577,6 +577,7 @@ class VoteServer(threading.Thread, object):
 
         # if is_main_worker():
         #     return True
+        self.vote_poll[name_action] += 1
 
         try:
             assert name_action in self.vote_poll.keys(),  "Collect for invalid name %s" % name_action

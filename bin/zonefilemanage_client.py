@@ -24,7 +24,6 @@ def vote_for_name_to_one(name, action, block_id, poll, ip):
 
         user_info = {'name': name, 'action': action, 'block_id': block_id, 'poll': poll}
         r = requests.post("http://" + ip + ":5001/vote", data=user_info)
-        log.info("vote result " + r.text)
         return True
 
     except Exception, e:
