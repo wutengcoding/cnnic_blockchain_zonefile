@@ -579,6 +579,7 @@ class VoteServer(threading.Thread, object):
             return res
         except Exception, e:
             log.exception(e)
+            log.info("The poll is %s " % (str(self.vote_poll)))
             return False
 
 
