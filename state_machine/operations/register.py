@@ -136,7 +136,7 @@ def check_register(state_engine, nameop, block_id, checked_ops):
         #
         # if is_main_worker():
         #     poll = True
-        # time.sleep(5)
+        time.sleep(5)
         vote_for_name(name, "REGISTER", nameop['block_number'], poll)
         return False
 
