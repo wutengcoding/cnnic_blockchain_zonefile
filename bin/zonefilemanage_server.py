@@ -560,7 +560,7 @@ class VoteServer(threading.Thread, object):
             poll = request.form['poll']
             name = request.form['name']
             action = request.form['action']
-
+            ip = request.remote_addr
             if "True" == poll:
                 poll = True
             else:
@@ -569,15 +569,12 @@ class VoteServer(threading.Thread, object):
             item = name + '_' + action
 
             if poll:
+                log.info("The poll for [%s, %s] is %s" % (ip, item, poll))
                 if name in self.vote_poll.keys():
                     self.vote_poll[item] += 1
                 else:
                     self.vote_poll[item] = 1
-            else:
-                if name in self.vote_poll.keys():
-                    self.vote_poll[item] += 0
-                else:
-                    self.vote_poll[item] = 0
+
 
 
             return json.dumps(
