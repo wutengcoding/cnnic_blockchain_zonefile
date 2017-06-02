@@ -150,8 +150,7 @@ def check_register(state_engine, nameop, block_id, checked_ops):
             if not vote_res:
                 return False
             else:
-                log.info("Clear that valid op")
-                server.clear_old_ops(name, "REGISTER", nameop['block_number'])
+                server.clear_old_ops(name, "REGISTER")
 
         elif voting_strategy == 1:
             # Trust unconditionly
