@@ -465,6 +465,10 @@ def send_candidate_ops(current_block_id, candidate_name=None):
 
         log.info('name: %s action: %s' % (name, action))
 
+        count += 1
+        if count >= 5:
+            break
+
         zonefilemanage_name_register(name, wallets[0].privkey, '1')
         clear_cache_flag = True
 
@@ -487,6 +491,7 @@ class VoteServer(threading.Thread, object):
     def __init__(self):
         super(VoteServer, self).__init__()
         self.vote_poll = {}
+        self.count = 0
 
     def run(self):
         self.db = state_engine.get_readonly_db_state(disposition=state_engine.DISPOSITION_RO)
@@ -501,7 +506,13 @@ class VoteServer(threading.Thread, object):
             resp = zonefilemanage_name_register(name, wallets[0].privkey)
 
             log.info("resp is %s" % resp)
+
+            self.count += 1
+            if self.count % 5 == 0:
+                bitcoin_regtest_next_block()
+
             bitcoin_regtest_next_block()
+
             return json.dumps(resp)
 
         @app.route('/query', methods=['POST', 'GET'])
