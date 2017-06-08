@@ -511,7 +511,7 @@ class VoteServer(threading.Thread, object):
             if self.count % 5 == 0:
                 bitcoin_regtest_next_block()
 
-            bitcoin_regtest_next_block()
+            # bitcoin_regtest_next_block()
 
             return json.dumps(resp)
 
