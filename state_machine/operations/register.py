@@ -140,7 +140,10 @@ def check_register(state_engine, nameop, block_id, checked_ops):
         # t = threading.Timer(5.0, vote_for_name, [name, "REGISTER", nameop['block_number'], poll])
         # t.start()
 
-        vote_for_name(name, "REGISTER", nameop['block_number'], poll)
+        # vote_for_name(name, "REGISTER", nameop['block_number'], poll)
+
+        t = threading.Timer(0, vote_for_name, [name, "REGISTER", nameop['block_number'], poll])
+        t.start()
         return False
 
     elif status == '1':
